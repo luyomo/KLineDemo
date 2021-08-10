@@ -11,7 +11,20 @@ export default function UpdateKLineChart () {
         const lastData = dataList[dataList.length - 1]
         const newData = generatedKLineDataList(lastData.timestamp, lastData.close, 1)[0]
         newData.timestamp += 1000 * 60
-        kLineChart.updateData(newData)
+
+        const asyncFetch = () => {
+          fetch('https://www.51yomo.net/stock-api/tickData')
+            .then((response) => response.json())
+            .then((json) => {
+              for (const val of json) {
+                kLineChart.updateData(val)
+              }
+            })
+            .catch((error) => {
+              console.log('fetch data failed', error)
+            })
+        }
+        asyncFetch()
       }
       updateData(kLineChart)
     }, 1000)
